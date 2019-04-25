@@ -48,7 +48,8 @@ public class JwtUtil {
 		.setId(id)           //用户id
                 .setSubject(subject) //用户名
                 .setIssuedAt(now)   //用于设置签发时间
-                .signWith(SignatureAlgorithm.HS256, key).claim("roles", roles);  //用于设置签名秘钥
+                .signWith(SignatureAlgorithm.HS256, key) //用于设置签名秘钥
+		.claim("roles", roles);  //自定义，设置用户角色
         if (ttl > 0) {
             builder.setExpiration( new Date( nowMillis + ttl));  //设置过期时间
         }
