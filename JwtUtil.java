@@ -1,4 +1,3 @@
-package util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
@@ -15,9 +14,9 @@ import java.util.Date;
 @ConfigurationProperties("jwt.config")
 public class JwtUtil {
 
-    private String key ;
+    private String key ; //关键字（盐）
 	
-    private long ttl ;//一个小时
+    private long ttl ;//一个小时（过期时间）
 
     public String getKey() {
         return key;
@@ -45,14 +44,15 @@ public class JwtUtil {
     public String createJWT(String id, String subject, String roles) {
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
-        JwtBuilder builder = Jwts.builder().setId(id)
-                .setSubject(subject)
-                .setIssuedAt(now)
-                .signWith(SignatureAlgorithm.HS256, key).claim("roles", roles);
+        JwtBuilder builder = Jwts.builder()
+		.setId(id)           //用户id
+                .setSubject(subject) //用户名
+                .setIssuedAt(now)   //用于设置签发时间
+                .signWith(SignatureAlgorithm.HS256, key).claim("roles", roles);  //用于设置签名秘钥
         if (ttl > 0) {
-            builder.setExpiration( new Date( nowMillis + ttl));
+            builder.setExpiration( new Date( nowMillis + ttl));  //设置过期时间
         }
-        return builder.compact();
+        return builder.compact(); //转化成字符串返回
     }
 
     /**
